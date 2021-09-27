@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@page import="javax.servlet.http.HttpSession" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -432,7 +433,7 @@
 
         React.useEffect(() => {
             window.addEventListener("resize", handleResize);
-            draw();
+            draw(); 
             renderHistory();
         }, []);
         React.useEffect(() => {
@@ -458,24 +459,18 @@
         }
 
         const renderHistory = () => {
-            $.ajax({
-                url: '${pageContext.request.contextPath}/check',
-                type: 'GET',
-                async: true,
-                dataType: 'json',
-                success: (data) => {
-                    let resp = [];
-                    data.forEach(element => {
-                        resp.push(createElement(element.id, element.x, element.y, element.r, element.status, element.status === "Да" ? true : false));
-                    });
-                    setRows(resp);
-                },
-                error: () => {
-                    let resp = [];
-                    setRows(resp);
-                }
-            });
+            <c:if test="${sessionScope.get('history').size() > 0}">
+                let resp = [];
+                <c:forEach var="i" begin="0" end="${sessionScope.get('history').size()-4}" step="4">
+                    resp.push(createElement(Math.floor(${i/4} + 1), ${sessionScope.get('history').get(i)}, ${sessionScope.get('history').get(i + 1)},
+                        ${sessionScope.get('history').get(i + 2)}, "${sessionScope.get('history').get(i + 3)}", ${sessionScope.get('history').get(i + 3) == "Да"}));
+                </c:forEach>
+                setRows(resp);
+                return;
+            </c:if>
+            setRows([]);
         }
+
         return (
             <div className={classes.wrap}>
                 <div id="vertical_wrap">
@@ -534,13 +529,16 @@
                                         <br/>
                                         <b>Y:</b><br/>
                                         <TextField id="Y" name="Y" helperText="Float from -5 to 3" variant="outlined"
-                                                   color="secondary" type="number"
+                                                   color="secondary"
+                                                   type="number"
                                                    onBlur={(e) => {
                                                        setY(e.target.value)
                                                    }}
                                                    InputProps={{
                                                        inputProps: {
-                                                           max: 3, min: -5
+                                                           max: 3.0, min: -5.0,
+                                                           maxLength: 6,
+                                                           step:"0.0001"
                                                        }
                                                    }}/>
                                         <br/>
@@ -663,7 +661,7 @@
                     </div>
                     <div id="footer">
                         <Typography variant="body2" color="textSecondary" align="center">
-                            {'Authored by: '}
+                            {'Powered by: '}
                             <Link color="inherit" href="https://vk.com/dpimenov98">
                                 Pimenov Danila P3230
                             </Link>{' '} <br/>
