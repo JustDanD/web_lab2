@@ -12,18 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AreaCheckServlet extends HttpServlet {
-
-    class Element {
-        String id, x, y, r, status;
-
-        public Element(String id, String x, String y, String r, String success) {
-            this.x = x;
-            this.id = id;
-            this.y = y;
-            this.r = r;
-            this.status = success;
-        }
-    }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding("utf-8");
@@ -56,27 +44,4 @@ public class AreaCheckServlet extends HttpServlet {
         resp.getWriter().println(response);
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/json");
-        HttpSession session = req.getSession();
-        try {
-            List<Element> historyJSON = new ArrayList<Element>();
-            ArrayList<String> history = (ArrayList<String>) session.getAttribute("history");
-            if (history == null) {
-                resp.sendError(404);
-                return;
-            }
-            for (int i = 0; i < history.size(); i = i + 4) {
-                historyJSON.add(new Element(Integer.toString((int)(i/4) + 1), history.get(i), history.get(i + 1), history.get(i + 2), history.get(i + 3)));
-            }
-            String json = new Gson().toJson(historyJSON);
-            resp.getWriter().write(json);
-        } catch (Exception e) {
-            resp.sendError(404);
-            return;
-        }
-
-    }
 }

@@ -609,9 +609,11 @@
                                         <b>R:</b>
                                         <br/><TextField size="small" readOnly color="secondary" variant="outlined"
                                                         value={r}/>
+                                        <br/>
                                         <b>Количество проверок:</b>
                                         <br/><TextField size="small" readOnly color="secondary" variant="outlined"
                                                         value={rows.length}/>
+                                        <br/>
                                         <b>Количество попаданий:</b>
                                         <br/><TextField size="small" readOnly color="secondary" variant="outlined"
                                                         value={success}/>
